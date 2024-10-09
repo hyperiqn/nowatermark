@@ -4,6 +4,7 @@ import os
 import time
 import numpy as np
 import tqdm
+import random
 
 import torch
 import torch.nn as nn
@@ -148,7 +149,7 @@ def main():
             # Logging
             if i % 10 == 0:
                 print(f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(train_loader)}], "
-                    f"D Loss: {loss_D.item():.4f}, G Loss: {loss_G.item():.4f}")
+                    f"D Loss: {loss_D.item()}, G Loss: {loss_G.item()}")
 
         # Checkpoints
         if (epoch + 1) % 10 == 0:
@@ -161,17 +162,18 @@ def main():
 
         netG.eval()
         with torch.no_grad():
-            for j, val_data in enumerate(val_loader):
-                patches_A_val, _, img_size_val, patch_sizes_val = val_data
-                patches_A_val = patches_A_val.squeeze(0).to(device)
+            random_idx = random.randint(0, len(val_loader) - 1)
+            val_data = list(val_loader)[random_idx]
+            patches_A_val, _, img_size_val, patch_sizes_val = val_data
+            patches_A_val = patches_A_val.squeeze(0).to(device)
 
-                with torch.cuda.amp.autocast():
-                    generated_patches = netG(patches_A_val)
+            with torch.cuda.amp.autocast():
+                generated_patches = netG(patches_A_val)
 
-                generated_patches = generated_patches.cpu()
-                generated_patches_pil = [transforms.ToPILImage()(val_dataset.denormalize2(patch)) for patch in generated_patches]
-                reconstructed_image = val_dataset.reconstruct_image(generated_patches_pil, img_size_val, patch_sizes_val)
-                reconstructed_image.save(os.path.join(val_output_dir, f"epoch_{epoch+1}_image_{j+1}.png"))  
+            generated_patches = generated_patches.cpu()
+            generated_patches_pil = [transforms.ToPILImage()(val_dataset.denormalize2(patch)) for patch in generated_patches]
+            reconstructed_image = val_dataset.reconstruct_image(generated_patches_pil, img_size_val, patch_sizes_val)
+            reconstructed_image.save(os.path.join(val_output_dir, f"epoch_{epoch+1}_image.png"))  
 
 
     torch.save(netG.state_dict(), os.path.join(checkpoint_dir, 'netG_final.pth'))
