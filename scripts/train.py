@@ -64,8 +64,8 @@ def main():
         stride=128
     )
 
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
-    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
     # =========================
     # 4. Initialize Models
@@ -88,7 +88,7 @@ def main():
     criterionBCE = nn.BCEWithLogitsLoss()
     criterionL1 = nn.L1Loss()
     criterionVGG = VGGLoss(device).to(device)
-    scaler = torch.GradScaler()
+    scaler = torch.cuda.amp.GradScaler()
 
     # =========================
     # 7. Training Loop
@@ -107,7 +107,7 @@ def main():
             patches_B = patches_B.to(device)
 
             # Discriminator update
-            with torch.autocast(device_type=device.type):
+            with torch.cuda.amp.autocast():
                 # Real patches
                 D_real = netD(patches_A, patches_B)
                 loss_D_real = criterionBCE(D_real, torch.ones_like(D_real, device=device))
@@ -126,7 +126,7 @@ def main():
             scaler.update()
 
             # Generator update
-            with torch.autocast(device_type=device.type):
+            with torch.cuda.amp.autocast():
                 # BCE Loss
                 fake_patches_B = netG(patches_A)
                 D_fake = netD(patches_A, fake_patches_B)
@@ -151,6 +151,10 @@ def main():
                 print(f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(train_loader)}], "
                     f"D Loss: {loss_D.item()}, G Loss: {loss_G.item()}")
 
+            torch.cuda.empty_cache()
+        
+        torch.cuda.empty_cache()
+
         # Checkpoints
         if (epoch + 1) % 10 == 0:
             torch.save(netG.state_dict(), os.path.join(checkpoint_dir, f'netG_epoch_{epoch+1}.pth'))
@@ -167,13 +171,15 @@ def main():
             patches_A_val, _, img_size_val, patch_sizes_val = val_data
             patches_A_val = patches_A_val.squeeze(0).to(device)
 
-            with torch.autocast(device_type=device.type):
+            with torch.cuda.amp.autocast():
                 generated_patches = netG(patches_A_val)
 
             generated_patches = generated_patches.cpu()
             generated_patches_pil = [transforms.ToPILImage()(val_dataset.denormalize2(patch)) for patch in generated_patches]
             reconstructed_image = val_dataset.reconstruct_image(generated_patches_pil, img_size_val, patch_sizes_val)
-            reconstructed_image.save(os.path.join(val_output_dir, f"epoch_{epoch+1}_image.png"))  
+            reconstructed_image.save(os.path.join(val_output_dir, f"epoch_{epoch+1}_image.png")) 
+
+        torch.cuda.empty_cache() 
 
 
     torch.save(netG.state_dict(), os.path.join(checkpoint_dir, 'netG_final.pth'))
