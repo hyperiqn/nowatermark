@@ -49,16 +49,16 @@ def main():
     os.makedirs(checkpoint_dir, exist_ok=True)
 
     train_dataset = ImageToImageDataset(
-        root_A='C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/selected_images/train/train', 
-        root_B='C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/selected_images/train/natural', 
+        root_A='/kaggle/input/watermark-dataset/selected_images/train/train', 
+        root_B='/kaggle/input/watermark-dataset/selected_images/train/natural', 
         transform=transform,
         patch_size=256,
         stride=128
     )
 
     val_dataset = ImageToImageDataset(
-        root_A='C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/selected_images/val/train', 
-        root_B='C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/selected_images/val/natural', 
+        root_A='/kaggle/input/watermark-dataset/selected_images/val/train', 
+        root_B='/kaggle/input/watermark-dataset/selected_images/val/natural', 
         transform=transform,
         patch_size=256,
         stride=128
