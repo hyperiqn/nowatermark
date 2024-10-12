@@ -88,7 +88,7 @@ def main():
     criterionBCE = nn.BCEWithLogitsLoss()
     criterionL1 = nn.L1Loss()
     criterionVGG = VGGLoss(device).to(device)
-    scaler = torch.cuda.amp.GradScaler()
+    scaler = torch.amp.GradScaler('cuda')
 
     # =========================
     # 7. Training Loop
@@ -107,7 +107,7 @@ def main():
             patches_B = patches_B.to(device)
 
             # Discriminator update
-            with torch.cuda.amp.autocast():
+            with torch.amp.autocast('cuda'):
                 # Real patches
                 D_real = netD(patches_A, patches_B)
                 loss_D_real = criterionBCE(D_real, torch.ones_like(D_real, device=device))
@@ -126,7 +126,7 @@ def main():
             scaler.update()
 
             # Generator update
-            with torch.cuda.amp.autocast():
+            with torch.amp.autocast('cuda'):
                 # BCE Loss
                 fake_patches_B = netG(patches_A)
                 D_fake = netD(patches_A, fake_patches_B)
@@ -171,7 +171,7 @@ def main():
             patches_A_val, _, img_size_val, patch_sizes_val = val_data
             patches_A_val = patches_A_val.squeeze(0).to(device)
 
-            with torch.cuda.amp.autocast():
+            with torch.amp.autocast('cuda'):
                 generated_patches = netG(patches_A_val)
 
             generated_patches = generated_patches.cpu()
