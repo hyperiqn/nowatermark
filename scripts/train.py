@@ -29,6 +29,8 @@ def main():
     num_epochs = 100
     learning_rate = 0.0002
     beta1 = 0.5
+    patch_size = 128
+    stride = 64
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # =====================
@@ -52,16 +54,16 @@ def main():
         root_A='/kaggle/input/watermark-dataset/selected_images/train/train', 
         root_B='/kaggle/input/watermark-dataset/selected_images/train/natural', 
         transform=transform,
-        patch_size=256,
-        stride=128
+        patch_size=patch_size,
+        stride=stride,
     )
 
     val_dataset = ImageToImageDataset(
         root_A='/kaggle/input/watermark-dataset/selected_images/val/train', 
         root_B='/kaggle/input/watermark-dataset/selected_images/val/natural', 
         transform=transform,
-        patch_size=256,
-        stride=128
+        patch_size=patch_size,
+        stride=stride,
     )
 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
@@ -176,7 +178,7 @@ def main():
 
             generated_patches = generated_patches.cpu()
             generated_patches_pil = [transforms.ToPILImage()(val_dataset.denormalize2(patch)) for patch in generated_patches]
-            reconstructed_image = val_dataset.reconstruct_image(generated_patches_pil, img_size_val, patch_sizes_val)
+            reconstructed_image = val_dataset.reconstruct_image(generated_patches_pil, img_size_val, patch_sizes_val, patch_size, stride)
             reconstructed_image.save(os.path.join(val_output_dir, f"epoch_{epoch+1}_image.png")) 
 
         torch.cuda.empty_cache() 
