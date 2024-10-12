@@ -7,7 +7,7 @@ from generator import Generator
 
 def infer(image_path, checkpoint_path, output_path, patch_size=256, stride=128, device='cuda'):
     device = torch.device(device if torch.cuda.is_available() else 'cpu')
-    netG = Generator().to(device)
+    netG = Generator(in_channels=3).to(device)
     netG.load_state_dict(torch.load(checkpoint_path, map_location=device))
     netG.eval()
 
@@ -21,7 +21,7 @@ def infer(image_path, checkpoint_path, output_path, patch_size=256, stride=128, 
     patches = torch.stack([transform(patch) for patch in patches]).to(device)
 
     with torch.no_grad():
-        with torch.cuda.amp.autocast():
+        with torch.autocast(device_type=device.type):
             generated_patches = netG(patches).cpu()
 
     generated_patches_pil = [transforms.ToPILImage()(dataset.denormalize2(patch)) for patch in generated_patches]

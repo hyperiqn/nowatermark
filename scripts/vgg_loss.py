@@ -6,7 +6,8 @@ import torchvision
 
 class VGG19(nn.Module):
     def __init__(self, requires_grad=False):
-        vgg_pretrained_features = torchvision.models.vgg19(pretrained=True).features
+        super().__init__()
+        vgg_pretrained_features = torchvision.models.vgg19(weights=torchvision.models.VGG19_Weights.IMAGENET1K_V1).features
         self.slice1 = nn.Sequential()
         self.slice2 = nn.Sequential()
         self.slice3 = nn.Sequential()
@@ -37,9 +38,9 @@ class VGG19(nn.Module):
     
 
 class VGGLoss(nn.Module):
-    def __init__(self):
+    def __init__(self, device):
         super().__init__()
-        self.vgg = VGG19().cuda()
+        self.vgg = VGG19().to(device)
         self.criterion = nn.L1Loss()
         self.weights = [1.0/32, 1.0/16, 1.0/8, 1.0/4, 1.0]
 

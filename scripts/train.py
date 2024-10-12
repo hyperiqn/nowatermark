@@ -3,7 +3,7 @@
 import os
 import time
 import numpy as np
-import tqdm
+from tqdm import tqdm
 import random
 
 import torch
@@ -49,16 +49,16 @@ def main():
     os.makedirs(checkpoint_dir, exist_ok=True)
 
     train_dataset = ImageToImageDataset(
-        root_A='path_to_train_w', 
-        root_B='path_to_train_nw', 
+        root_A='C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/selected_images/train/train', 
+        root_B='C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/selected_images/train/natural', 
         transform=transform,
         patch_size=256,
         stride=128
     )
 
     val_dataset = ImageToImageDataset(
-        root_A='path_to_val_w', 
-        root_B='path_to_val_nw', 
+        root_A='C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/selected_images/val/train', 
+        root_B='C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/selected_images/val/natural', 
         transform=transform,
         patch_size=256,
         stride=128
@@ -71,7 +71,7 @@ def main():
     # 4. Initialize Models
     # =========================
 
-    netG = Generator().to(device)
+    netG = Generator(in_channels=3).to(device)
     netD = Discriminator().to(device)
 
     # =========================
@@ -87,8 +87,8 @@ def main():
 
     criterionBCE = nn.BCEWithLogitsLoss()
     criterionL1 = nn.L1Loss()
-    criterionVGG = VGGLoss().to(device)
-    scaler = torch.cuda.amp.GradScaler()
+    criterionVGG = VGGLoss(device).to(device)
+    scaler = torch.GradScaler()
 
     # =========================
     # 7. Training Loop
@@ -107,7 +107,7 @@ def main():
             patches_B = patches_B.to(device)
 
             # Discriminator update
-            with torch.cuda.amp.autocast():
+            with torch.autocast(device_type=device.type):
                 # Real patches
                 D_real = netD(patches_A, patches_B)
                 loss_D_real = criterionBCE(D_real, torch.ones_like(D_real, device=device))
@@ -126,7 +126,7 @@ def main():
             scaler.update()
 
             # Generator update
-            with torch.cuda.amp.autocast():
+            with torch.autocast(device_type=device.type):
                 # BCE Loss
                 fake_patches_B = netG(patches_A)
                 D_fake = netD(patches_A, fake_patches_B)
@@ -167,7 +167,7 @@ def main():
             patches_A_val, _, img_size_val, patch_sizes_val = val_data
             patches_A_val = patches_A_val.squeeze(0).to(device)
 
-            with torch.cuda.amp.autocast():
+            with torch.autocast(device_type=device.type):
                 generated_patches = netG(patches_A_val)
 
             generated_patches = generated_patches.cpu()
