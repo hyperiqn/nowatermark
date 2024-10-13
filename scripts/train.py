@@ -29,8 +29,8 @@ def main():
     num_epochs = 100
     learning_rate = 0.0002
     beta1 = 0.5
-    patch_size = 128
-    stride = 64
+    patch_size = 256
+    stride = 256
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # =====================
@@ -158,7 +158,7 @@ def main():
         torch.cuda.empty_cache()
 
         # Checkpoints
-        if (epoch + 1) % 10 == 0:
+        if (epoch + 1) % 2 == 0:
             torch.save(netG.state_dict(), os.path.join(checkpoint_dir, f'netG_epoch_{epoch+1}.pth'))
             torch.save(netD.state_dict(), os.path.join(checkpoint_dir, f'netD_epoch_{epoch+1}.pth'))
 
