@@ -13,7 +13,7 @@ from torchvision import transforms
 from torchvision.utils import save_image
 
 from dataset2 import ImageToImageDataset
-from generator2 import Generator 
+from generator3 import Generator 
 from discriminator2 import Discriminator
 from vgg_loss2 import VGGLoss
 
