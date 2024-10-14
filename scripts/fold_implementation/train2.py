@@ -1,6 +1,7 @@
 import os
 import time
 import numpy as np
+import torch.amp
 from tqdm import tqdm
 import random
 
@@ -26,6 +27,7 @@ def main():
     num_epochs = 20
     learning_rate = 0.0002
     beta1 = 0.5
+    save_every = 1
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # =====================
@@ -56,8 +58,8 @@ def main():
         transform=transform
     )
 
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
-    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=8)
+    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=8)
 
     # =========================
     # 4. Initialize Models
@@ -84,6 +86,7 @@ def main():
     # 7. Training Loop
     # =========================
     for epoch in range(num_epochs):
+        """
         netG.train()
         netD.train()
         loop = tqdm(train_loader, desc=f"epoch [{epoch+1}/{num_epochs}]")
@@ -142,10 +145,10 @@ def main():
         torch.cuda.empty_cache()
 
         # Checkpoints
-        if (epoch + 1) % 1 == 0:
+        if (epoch + 1) % save_every == 0:
             torch.save(netG.state_dict(), os.path.join(checkpoint_dir, f'netG_epoch_{epoch+1}.pth'))
             torch.save(netD.state_dict(), os.path.join(checkpoint_dir, f'netD_epoch_{epoch+1}.pth'))
-
+        """
     # =========================
     # 8. Validation
     # =========================
@@ -159,18 +162,18 @@ def main():
             random_idx = random.randint(0, len(val_loader) - 1)
             img_A_val, _ = list(val_loader)[random_idx]
             img_A_val = img_A_val.to(device)
-            with torch.amp.autocast('cuda'):
-                generated_img = netG(img_A_val)
+            with torch.amp.autocast(enabled=False, device_type=device.type):
+                generated_img = netG(img_A_val.float())
             save_image(generated_img, os.path.join(val_output_dir, f"epoch_{epoch+1}_generated.png"))
 
             for img_A_val, img_B_val in val_loop:
                 img_A_val = img_A_val.to(device)
                 img_B_val = img_B_val.to(device)
-                with torch.amp.autocast('cuda'):
-                    fake_img_B_val = netG(img_A_val)
+                with torch.amp.autocast(enabled=False, device_type=device.type):
+                    fake_img_B_val = netG(img_A_val.float())
                 val_loss_G_L1 += criterionL1(fake_img_B_val, img_B_val).item()
                 val_loss_G_VGG += criterionVGG(fake_img_B_val, img_B_val).item()
-                D_fake_val = netD(img_A_val, fake_img_B_val)
+                D_fake_val = netD(img_A_val.float(), fake_img_B_val.float())
                 val_loss_G_BCE += criterionBCE(D_fake_val, torch.ones_like(D_fake_val, device=device)).item()
                 # average val losses
                 val_loop.set_postfix(
