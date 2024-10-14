@@ -38,5 +38,5 @@ if __name__ == "__main__":
         image_path="C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/selected_images/val/train/COCO_val2014_000000039814-Crocs_Logo-152.png", 
         checkpoint_path="C:/Users/s_ani/Downloads/netG_final.pth", 
         output_path="generated_image.png", 
-        device='cuda'
+        device='cpu'
     )
