@@ -86,7 +86,6 @@ def main():
     # 7. Training Loop
     # =========================
     for epoch in range(num_epochs):
-        """
         netG.train()
         netD.train()
         loop = tqdm(train_loader, desc=f"epoch [{epoch+1}/{num_epochs}]")
@@ -148,7 +147,7 @@ def main():
         if (epoch + 1) % save_every == 0:
             torch.save(netG.state_dict(), os.path.join(checkpoint_dir, f'netG_epoch_{epoch+1}.pth'))
             torch.save(netD.state_dict(), os.path.join(checkpoint_dir, f'netD_epoch_{epoch+1}.pth'))
-        """
+
     # =========================
     # 8. Validation
     # =========================
