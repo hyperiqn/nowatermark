@@ -159,7 +159,7 @@ def main():
             random_idx = random.randint(0, len(val_loader) - 1)
             img_A_val, _ = list(val_loader)[random_idx]
             img_A_val = img_A_val.to(device)
-            with torch.cuda.autocast('cuda'):
+            with torch.amp.autocast('cuda'):
                 generated_img = netG(img_A_val)
             save_image(generated_img, os.path.join(val_output_dir, f"epoch_{epoch+1}_generated.png"))
 
