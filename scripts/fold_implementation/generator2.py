@@ -72,8 +72,8 @@ class Generator(nn.Module):
 
     def forward(self, x):
         batch_size, channels, height, width = x.shape
-        patch_size = 256
-        stride = 256
+        patch_size = 128
+        stride = 128
         
         patches = F.unfold(x, kernel_size=(patch_size, patch_size), stride=(stride, stride)) 
         
