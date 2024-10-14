@@ -180,8 +180,8 @@ def main():
                     BCE=val_loss_G_BCE / (val_loop.n + 1),
                     L1=val_loss_G_L1 / (val_loop.n + 1),
                     VGG=val_loss_G_VGG / (val_loop.n + 1),
-                    
                 )
+            print(f"BCE_Loss={val_loss_G_BCE / num_val_batches} \nL1_Loss={val_loss_G_L1 / num_val_batches} \nVGG_Loss={val_loss_G_VGG / num_val_batches}")
             torch.cuda.empty_cache()
 
     # =========================
