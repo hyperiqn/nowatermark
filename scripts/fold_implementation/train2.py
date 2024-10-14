@@ -133,8 +133,8 @@ def main():
 
             # Logging
             loop.set_postfix(
-                loss_D = loss_D.item(),
-                loss_G = loss_G.item(),
+                l_D = loss_D.item(),
+                l_G = loss_G.item(),
             )
 
             torch.cuda.empty_cache()
@@ -174,9 +174,9 @@ def main():
                 val_loss_G_BCE += criterionBCE(D_fake_val, torch.ones_like(D_fake_val, device=device)).item()
                 # average val losses
                 val_loop.set_postfix(
-                    BCE_loss=val_loss_G_BCE / (val_loop.n + 1),
-                    L1_loss=val_loss_G_L1 / (val_loop.n + 1),
-                    VGG_loss=val_loss_G_VGG / (val_loop.n + 1),
+                    BCE=val_loss_G_BCE / (val_loop.n + 1),
+                    L1=val_loss_G_L1 / (val_loop.n + 1),
+                    VGG=val_loss_G_VGG / (val_loop.n + 1),
                     
                 )
             torch.cuda.empty_cache()
