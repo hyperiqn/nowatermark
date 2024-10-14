@@ -22,7 +22,7 @@ def main():
     # ======================
     # 1. Hyperparameters
     # ======================
-    batch_size = 4 
+    batch_size = 1 
     num_epochs = 20
     learning_rate = 0.0002
     beta1 = 0.5
