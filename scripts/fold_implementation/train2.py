@@ -1,6 +1,5 @@
 import os
-import time
-import numpy as np
+import argparse
 import torch.amp
 from tqdm import tqdm
 import random
@@ -18,13 +17,26 @@ from generator2 import Generator
 from discriminator2 import Discriminator
 from vgg_loss2 import VGGLoss
 
+def load_checkpoint(checkpoint_path, model, optimizer=None):
+    if os.path.exists(checkpoint_path):
+        checkpoint = torch.load(checkpoint_path)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        if optimizer:
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        start_epoch = checkpoint['epoch']
+        print(f"Loaded checkpoint from epoch {start_epoch}")
+        return start_epoch
+    else:
+        print(f"No checkpoint found at {checkpoint_path}. Starting from scratch.")
+        return 0
 
-def main():
+
+def main(args):
     # ======================
     # 1. Hyperparameters
     # ======================
     batch_size = 1
-    num_epochs = 20
+    num_epochs = 10
     learning_rate = 0.0002
     beta1 = 0.9
     save_every = 1
@@ -41,8 +53,8 @@ def main():
     # =========================
     # 3. Load dataset
     # =========================
-    val_output_dir = "/kaggle/working/validation_outputs"
-    checkpoint_dir = "/kaggle/working/checkpoints"
+    val_output_dir = args.val_output_dir
+    checkpoint_dir = args.checkpoint_dir
     os.makedirs(val_output_dir, exist_ok=True)
     os.makedirs(checkpoint_dir, exist_ok=True)
 
@@ -83,9 +95,18 @@ def main():
     g_scaler = torch.amp.GradScaler()
 
     # =========================
-    # 7. Training Loop
+    # 7. Load Checkpoints if paths are provided
     # =========================
-    for epoch in range(num_epochs):
+    start_epoch = 0
+    if args.netG_path:
+        start_epoch = load_checkpoint(args.netG_path, netG, optimizerG)
+    if args.netD_path:
+        load_checkpoint(args.netD_path, netD, optimizerD)
+
+    # =========================
+    # 8. Training Loop
+    # =========================
+    for epoch in range(start_epoch, num_epochs):
         netG.train()
         netD.train()
         loop = tqdm(train_loader, desc=f"epoch [{epoch+1}/{num_epochs}]")
@@ -135,20 +156,29 @@ def main():
 
             # Logging
             loop.set_postfix(
-                l_D = loss_D.item(),
-                l_G = loss_G.item(),
+                loss_D=loss_D.item(),
+                loss_G=loss_G.item(),
             )
 
             torch.cuda.empty_cache()
         
         torch.cuda.empty_cache()
-        # Checkpoints
-        if (epoch + 1) % save_every == 0:
-            torch.save(netG.state_dict(), os.path.join(checkpoint_dir, f'netG_epoch_{epoch+1}.pth'))
-            torch.save(netD.state_dict(), os.path.join(checkpoint_dir, f'netD_epoch_{epoch+1}.pth'))
         
+        if (epoch + 1) % save_every == 0:
+            torch.save({
+                'epoch': epoch + 1,
+                'model_state_dict': netG.state_dict(),
+                'optimizer_state_dict': optimizerG.state_dict(),
+            }, os.path.join(checkpoint_dir, 'netG_latest.pth'))
+            
+            torch.save({
+                'epoch': epoch + 1,
+                'model_state_dict': netD.state_dict(),
+                'optimizer_state_dict': optimizerD.state_dict(),
+            }, os.path.join(checkpoint_dir, 'netD_latest.pth'))
+
     # =========================
-    # 8. Validation
+    # 9. Validation
     # =========================
         netG.eval()
         val_loss_G_L1 = 0
@@ -175,19 +205,27 @@ def main():
                 val_loss_G_BCE += criterionBCE(D_fake_val, torch.ones_like(D_fake_val, device=device)).item()
                 # average val losses
                 val_loop.set_postfix(
-                    BCE=val_loss_G_BCE / (val_loop.n + 1),
-                    L1=val_loss_G_L1 / (val_loop.n + 1),
-                    VGG=val_loss_G_VGG / (val_loop.n + 1),
+                    BCE_loss=val_loss_G_BCE / (val_loop.n + 1),
+                    L1_loss=val_loss_G_L1 / (val_loop.n + 1),
+                    VGG_loss=val_loss_G_VGG / (val_loop.n + 1),
                 )
             print(f"BCE_Loss={val_loss_G_BCE / num_val_batches} \nL1_Loss={val_loss_G_L1 / num_val_batches} \nVGG_Loss={val_loss_G_VGG / num_val_batches}")
             torch.cuda.empty_cache()
 
     # =========================
-    # 9. Save Model
+    # 10. Save Final Model
     # =========================
     torch.save(netG.state_dict(), os.path.join(checkpoint_dir, 'netG_final.pth'))
     torch.save(netD.state_dict(), os.path.join(checkpoint_dir, 'netD_final.pth'))  
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Training Script")
+    parser.add_argument('--netG_path', type=str, default=None, help='Path to generator weights')
+    parser.add_argument('--netD_path', type=str, default=None, help='Path to discriminator weights')
+    parser.add_argument('--val_output_dir', type=str, default="/kaggle/working/validation_outputs", help='Validation output directory')
+    parser.add_argument('--checkpoint_dir', type=str, default="/kaggle/working/checkpoints", help='Checkpoint directory')
+    
+    args = parser.parse_args()
+
+    main(args)
