@@ -143,12 +143,12 @@ def main():
             torch.cuda.empty_cache()
         
         torch.cuda.empty_cache()
-
+        """
         # Checkpoints
         if (epoch + 1) % save_every == 0:
             torch.save(netG.state_dict(), os.path.join(checkpoint_dir, f'netG_epoch_{epoch+1}.pth'))
             torch.save(netD.state_dict(), os.path.join(checkpoint_dir, f'netD_epoch_{epoch+1}.pth'))
-        """
+        
     # =========================
     # 8. Validation
     # =========================
