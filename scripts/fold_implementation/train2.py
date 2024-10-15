@@ -41,8 +41,8 @@ def main():
     # =========================
     # 3. Load dataset
     # =========================
-    val_output_dir = "validation_outputs"
-    checkpoint_dir = "checkpoints"
+    val_output_dir = "/kaggle/working/validation_outputs"
+    checkpoint_dir = "/kaggle/working/checkpoints"
     os.makedirs(val_output_dir, exist_ok=True)
     os.makedirs(checkpoint_dir, exist_ok=True)
 
