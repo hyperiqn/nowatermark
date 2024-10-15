@@ -41,8 +41,8 @@ def main():
     # =========================
     # 3. Load dataset
     # =========================
-    val_output_dir = "/kaggle/output/validation_outputs"
-    checkpoint_dir = "/kaggle/output/checkpoints"
+    val_output_dir = "/kaggle/working/validation_outputs"
+    checkpoint_dir = "/kaggle/working/checkpoints"
     os.makedirs(val_output_dir, exist_ok=True)
     os.makedirs(checkpoint_dir, exist_ok=True)
 
@@ -86,7 +86,6 @@ def main():
     # 7. Training Loop
     # =========================
     for epoch in range(num_epochs):
-        """
         netG.train()
         netD.train()
         loop = tqdm(train_loader, desc=f"epoch [{epoch+1}/{num_epochs}]")
@@ -143,7 +142,6 @@ def main():
             torch.cuda.empty_cache()
         
         torch.cuda.empty_cache()
-        """
         # Checkpoints
         if (epoch + 1) % save_every == 0:
             torch.save(netG.state_dict(), os.path.join(checkpoint_dir, f'netG_epoch_{epoch+1}.pth'))
