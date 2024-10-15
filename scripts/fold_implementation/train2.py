@@ -26,7 +26,7 @@ def main():
     batch_size = 1
     num_epochs = 20
     learning_rate = 0.0002
-    beta1 = 0.5
+    beta1 = 0.9
     save_every = 1
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
