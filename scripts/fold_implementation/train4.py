@@ -47,19 +47,18 @@ def main():
     os.makedirs(checkpoint_dir, exist_ok=True)
 
     train_dataset = ImageToImageDataset(
-        root_A='/kaggle/input/clwd-images-only/CLWD_images/Watermarked_image', 
-        root_B='/kaggle/input/clwd-images-only/CLWD_images/Watermarked_free_image', 
+        root_A='/kaggle/input/clwd-images-only/CLWD_images/train/Watermark_image', 
+        root_B='/kaggle/input/clwd-images-only/CLWD_images/train/Watermark_free_image', 
         transform=transform
     )
-    """
     val_dataset = ImageToImageDataset(
-        root_A='/kaggle/input/watermark-dataset/selected_images/val/train', 
-        root_B='/kaggle/input/watermark-dataset/selected_images/val/natural', 
+        root_A='/kaggle/input/clwd-images-only/CLWD_images/val/Watermark_image', 
+        root_B='/kaggle/input/clwd-images-only/CLWD_images/val/Watermark_free_image', 
         transform=transform
     )
-    """
+    
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
-    # val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
 
     # =========================
     # 4. Initialize Models
@@ -152,7 +151,6 @@ def main():
     # =========================
     # 8. Validation
     # =========================
-        """
         netG.eval()
         val_loss_G_L1 = 0
         val_loss_G_VGG = 0
@@ -185,7 +183,7 @@ def main():
                 )
             print(f"BCE_Loss={val_loss_G_BCE / num_val_batches} \nL1_Loss={val_loss_G_L1 / num_val_batches} \nVGG_Loss={val_loss_G_VGG / num_val_batches}")
             torch.cuda.empty_cache()
-        """
+
     # =========================
     # 9. Save Model
     # =========================
