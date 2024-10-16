@@ -192,6 +192,7 @@ def main(args):
             img_A_val = img_A_val.to(device)
             with torch.amp.autocast(enabled=False, device_type=device.type):
                 generated_img = netG(img_A_val.float())
+            save_image(img_A_val, os.path.join(val_output_dir, f"epoch_{epoch+1}_original.png"))
             save_image(generated_img, os.path.join(val_output_dir, f"epoch_{epoch+1}_generated.png"))
 
             for img_A_val, img_B_val in val_loop:
