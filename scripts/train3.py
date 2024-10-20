@@ -223,10 +223,7 @@ def main():
                 loss_G = loss_G.item(),
             )
 
-            torch.cuda.empty_cache()
         
-        torch.cuda.empty_cache()
-
         if (epoch + 1) % save_every == 0:
             save_checkpoint(epoch + 1, netG, netD, optimizerG, optimizerD, checkpoint_dir, filename=f"checkpoint_epoch_{epoch+1}.pth.tar")
         
@@ -266,7 +263,6 @@ def main():
                     VGG=criterionVGG(fake_img_B_val, img_B_val).item(),
                 )
             print(f"BCE_Loss={val_loss_G_BCE / num_val_batches} \nL1_Loss={val_loss_G_L1 / num_val_batches} \nVGG_Loss={val_loss_G_VGG / num_val_batches}")
-            torch.cuda.empty_cache()
 
     # =========================
     # 10. Save Final Model
