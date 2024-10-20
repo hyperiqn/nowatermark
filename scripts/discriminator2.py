@@ -14,7 +14,7 @@ class ConvBlock(nn.Module):
         return self.conv(x) 
     
 class Discriminator(nn.Module):
-    def __init__(self, in_channels=3, features=[64, 128, 256, 512, 512, 1024]):
+    def __init__(self, in_channels=3, features=[64, 128, 256, 512]):
         super().__init__()
         self.initial = nn.Sequential(
             spectral_norm(
@@ -44,8 +44,8 @@ def test():
     y = torch.randn((1, 3, 256, 256))
     model = Discriminator()
     preds = model(x, y)
-    print(preds)
     print(preds.shape)
+    print(f"number of parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}")
 
 if __name__ == "__main__":
     test()
