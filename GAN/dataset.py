@@ -6,12 +6,6 @@ from torch.utils.data import Dataset
 
 class ImageToImageDataset(Dataset):
     def __init__(self, root_A, root_B, transform=None):
-        """
-        Args:
-            root_A (str): Directory with input images.
-            root_B (str): Directory with target images.
-            transform (callable, optional): Optional transform to be applied on a sample.
-        """
         self.root_A = root_A
         self.root_B = root_B
         self.transform = transform
