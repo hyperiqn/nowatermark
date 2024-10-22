@@ -27,7 +27,6 @@ class VGG19(nn.Module):
                 param.requires_grad = False
         
     def forward(self, x):
-        # check
         h_relu1 = self.slice1(x)
         h_relu2 = self.slice2(h_relu1)
         h_relu3 = self.slice3(h_relu2)
