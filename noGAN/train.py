@@ -18,9 +18,6 @@ from autoencoder import Generator
 from vgg_loss import VGGLoss
 
 
-# =========================
-# Compute Gradient Penalty
-# =========================
 
 def save_checkpoint(epoch, netG, optimizerG, checkpoint_dir, filename="checkpoint.pth.tar"):
     checkpoint = {
