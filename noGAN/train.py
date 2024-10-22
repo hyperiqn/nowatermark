@@ -1,4 +1,4 @@
-# autoencoder.py
+# train.py
 import os
 import time
 import numpy as np
