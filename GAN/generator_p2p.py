@@ -46,7 +46,7 @@ class Block(nn.Module):
         return self.conv(x)
 
 
-class Generator(nn.Module):
+class GeneratorP2P(nn.Module):
     def __init__(self, in_channels, features=64, num_residuals=9):
         super().__init__()
         self.initial_down = nn.Sequential(
