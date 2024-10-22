@@ -14,28 +14,13 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.utils import save_image
 
-from dataset2 import ImageToImageDataset
-from generator3 import Generator 
-from discriminator2 import Discriminator
-from vgg_loss2 import VGGLoss
+from dataset import ImageToImageDataset
+from generator_segformer import Generator 
+from discriminator import Discriminator
+from vgg_loss import VGGLoss
 
 
-# =========================
-# Compute Gradient Penalty
-# =========================
 def compute_gradient_penalty(discriminator, real_images, fake_images, input_images, device):
-    """
-    Computes the gradient penalty for WGAN-GP.
-
-    Args:
-        discriminator: The discriminator network.
-        real_images: A batch of real images.
-        fake_images: A batch of fake images.
-        device: The device to perform calculations on (e.g., 'cuda').
-
-    Returns:
-        Gradient penalty (a scalar).
-    """
     batch_size, channels, height, width = real_images.shape
     epsilon = torch.rand((batch_size, 1, 1, 1), requires_grad=True).to(device)
     epsilon = epsilon.expand_as(real_images)
