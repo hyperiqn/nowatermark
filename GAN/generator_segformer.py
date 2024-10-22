@@ -36,7 +36,7 @@ class UNetDecoder(nn.Module):
         x = F.interpolate(x, size=input_skip.shape[2:], mode='bilinear', align_corners=False)
         return x
 
-class Generator(nn.Module):
+class GeneratorSU(nn.Module):
     def __init__(self, in_channels=3, out_channels=3):
         super(Generator, self).__init__()
         self.encoder = SegFormerEncoder(in_channels)
