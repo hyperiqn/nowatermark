@@ -2,8 +2,8 @@ import streamlit as st
 import torch
 from PIL import Image
 import torchvision.transforms as transforms
-from scripts.generator3 import Generator 
-from no_gan.autoencoder import AutoEncoder 
+from GAN.generator_segformer import Generator 
+from noGAN.autoencoder import AutoEncoder 
 
 st.title("Watermark Removal: Compare GAN and Autoencoder")
 
