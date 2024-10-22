@@ -1,3 +1,4 @@
+# inference.py
 import os
 import torch
 from PIL import Image
