@@ -37,9 +37,9 @@ def infer(image_path, checkpoint_path, output_path, device='cuda'):
 
 if __name__ == "__main__":
     infer(
-        image_path="/data/anirudh/watermark_removal/CLWD_images/val/Watermark_image/59913.jpg", 
-        checkpoint_path="/data/anirudh/watermark_removal/output2/checkpoints/netG_final.pth", 
-        output_path="/data/anirudh/watermark_removal/output2/test/generated_image.png", 
+        image_path="", 
+        checkpoint_path="", 
+        output_path="", 
         device='cuda',
     )
 
