@@ -2,7 +2,8 @@ import streamlit as st
 import torch
 from PIL import Image
 import torchvision.transforms as transforms
-from GAN.generator_segformer import Generator 
+from GAN.generator_segformer import GeneratorSU
+from GAN.generator_p2p import GeneratorP2P
 from noGAN.autoencoder import AutoEncoder 
 
 st.title("Watermark Removal: Compare GAN and Autoencoder")
@@ -34,7 +35,7 @@ def infer(image, model, device='cpu'):
     return output_img_pil
 
 def load_gan_model(checkpoint_path):
-    gan_model = Generator(in_channels=3)
+    gan_model = GeneratorSU(in_channels=3)
     gan_model.load_state_dict(torch.load(checkpoint_path, map_location=torch.device('cpu'), weights_only=True))
     return gan_model
 
