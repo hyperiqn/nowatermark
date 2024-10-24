@@ -31,13 +31,13 @@ def main():
     ])
 
 
-    val_dataset = ImageToImageDataset(
+    test_dataset = ImageToImageDataset(
         root_A='', 
         root_B='', 
         transform=transform
     )
     
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
 
     checkpoint_path = ''
     netG = GeneratorSU(in_channels=3).to(device)
@@ -49,7 +49,7 @@ def main():
     num_images = 0
 
     with torch.no_grad():
-        val_loop = tqdm(val_loader, desc="Calculating SSIM and PSNR")
+        val_loop = tqdm(test_loader, desc="Calculating SSIM and PSNR")
         for i, (img_A, img_B) in enumerate(val_loop):
             img_A = img_A.to(device)
             img_B = img_B.to(device)
