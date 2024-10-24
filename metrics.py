@@ -63,11 +63,11 @@ def main():
                 img_B_single = img_B_denorm[j]
                 fake_img_B_single = fake_img_B_denorm[j]
 
-                ssim_val = compute_ssim(fake_img_B_single, img_B_single)
-                total_ssim += ssim_val
+                ssim = compute_ssim(fake_img_B_single, img_B_single)
+                total_ssim += ssim
 
-                psnr_val = psnr(fake_img_B_single, img_B_single, data_range=1.0)
-                total_psnr += psnr_val.item()
+                psnr = psnr(fake_img_B_single, img_B_single, data_range=1.0)
+                total_psnr += psnr.item()
 
                 num_images += 1
 
