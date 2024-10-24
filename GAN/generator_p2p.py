@@ -89,7 +89,7 @@ class GeneratorP2P(nn.Module):
 
 def test():
     x = torch.randn((1, 3, 256, 256))
-    model = Generator(in_channels=3, features=64)
+    model = GeneratorP2P(in_channels=3, features=64)
     preds = model(x)
     print(preds.shape)
     print(f"number of parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}")

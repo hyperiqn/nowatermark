@@ -15,7 +15,7 @@ from torchvision import transforms
 from torchvision.utils import save_image
 
 from dataset import ImageToImageDataset
-from generator_segformer import Generator 
+from generator_segformer import GeneratorSU 
 from discriminator import Discriminator
 from vgg_loss import VGGLoss
 
@@ -114,7 +114,7 @@ def main():
     # =========================
     # 4. Initialize Models
     # =========================
-    netG = Generator(in_channels=3).to(device)
+    netG = GeneratorSU(in_channels=3).to(device)
     netD = Discriminator().to(device)
 
     # =========================

@@ -7,8 +7,8 @@ from tqdm import tqdm
 from skimage.metrics import structural_similarity as ssim
 from torchmetrics.functional import peak_signal_noise_ratio as psnr
 import numpy as np
-from dataset import ImageToImageDataset
-from generator_segformer import Generator
+from GAN.dataset import ImageToImageDataset
+from GAN.generator_segformer import GeneratorSU
 import os
 
 def compute_ssim(img1, img2):
@@ -40,7 +40,7 @@ def main():
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
 
     checkpoint_path = "/data/anirudh/watermark_removal/output_no_gan/checkpoints/netG_final.pth"
-    netG = Generator(in_channels=3).to(device)
+    netG = GeneratorSU(in_channels=3).to(device)
     netG.load_state_dict(torch.load(checkpoint_path, map_location=device, weights_only=True))
     netG.eval()
 

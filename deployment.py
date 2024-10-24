@@ -6,7 +6,7 @@ from GAN.generator_segformer import GeneratorSU
 from GAN.generator_p2p import GeneratorP2P
 from noGAN.autoencoder import AutoEncoder 
 
-st.title("Watermark Removal: Compare GAN and Autoencoder")
+st.title("Watermark Removal from images:")
 
 st.sidebar.header("Upload Image")
 uploaded_file = st.sidebar.file_uploader("Choose an image...", type=["jpg", "png"])
@@ -40,27 +40,36 @@ def load_gan_model(checkpoint_path):
     return gan_model
 
 def load_autoencoder_model(checkpoint_path):
-    autoencoder_model = AutoEncoder(in_channels=3, out_channels=3)  # Replace with your autoencoder model class
+    autoencoder_model = AutoEncoder(in_channels=3, out_channels=3) 
     autoencoder_model.load_state_dict(torch.load(checkpoint_path, map_location=torch.device('cpu'), weights_only=True))
     return autoencoder_model
 
-gan_model = load_gan_model("C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/generator.pth")
+def load_pix2pixhd_model(checkpoint_path):
+    checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'), weights_only=True)
+    pix2pixhd_model = GeneratorP2P(in_channels=3)
+    pix2pixhd_model.load_state_dict(checkpoint['netG_state_dict'])
+    return pix2pixhd_model
+
+gan_model = load_gan_model("C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/SU.pth")
 autoencoder_model = load_autoencoder_model("C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/autoencoder.pth")
+pix2pixhd_model = load_pix2pixhd_model("C:/Users/s_ani/Documents/Programming/deeplearning/pix2pixhd/p2p_20.pth")
 
 if uploaded_file is not None:
-    st.image(uploaded_file, caption='Uploaded Image', width=256)
+    col1, col2, col3 = st.columns([1, 1, 1], gap="large")
+    with col2:
+        st.image(uploaded_file, caption='Uploaded Image', width=224)
     image = Image.open(uploaded_file).convert('RGB')
 
     gan_result_image = infer(image, gan_model, device='cpu')
-
     autoencoder_result_image = infer(image, autoencoder_model, device='cpu')
+    pix2pixhd_result_image = infer(image, pix2pixhd_model, device='cpu')
 
-    col2, col3 = st.columns(2)
-
-
+    col1, col2, col3 = st.columns(3, gap='large')
+    with col1:
+        st.image(gan_result_image, caption="SegformerUNet GAN Result", width=224)
     with col2:
-        st.image(gan_result_image, caption="GAN Result", width=256)
+        st.image(autoencoder_result_image, caption="Autoencoder Result", width=224)
     with col3:
-        st.image(autoencoder_result_image, caption="Autoencoder Result", width=256)
+        st.image(pix2pixhd_result_image, caption="Pix2PixHD Result", width=224)
 
 st.sidebar.write("Anirudh Swaminathan - 220968280 - DSE A2")

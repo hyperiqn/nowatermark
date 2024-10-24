@@ -36,9 +36,9 @@ class UNetDecoder(nn.Module):
         x = F.interpolate(x, size=input_skip.shape[2:], mode='bilinear', align_corners=False)
         return x
 
-class Generator(nn.Module):
+class AutoEncoder(nn.Module):
     def __init__(self, in_channels=3, out_channels=3):
-        super(Generator, self).__init__()
+        super(AutoEncoder, self).__init__()
         self.encoder = SegFormerEncoder(in_channels)
         self.decoder = UNetDecoder(in_channels=512, out_channels=out_channels)
 
@@ -49,7 +49,7 @@ class Generator(nn.Module):
         return x
 
 if __name__ == "__main__":
-    model = Generator(in_channels=3, out_channels=3) 
+    model = AutoEncoder(in_channels=3, out_channels=3) 
     x = torch.randn((1, 3, 256, 256))
     preds = model(x)
     print(preds.shape)

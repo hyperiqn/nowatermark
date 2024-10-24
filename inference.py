@@ -5,7 +5,7 @@ from PIL import Image
 import torchvision.transforms as transforms
 import numpy as np
 import cv2
-from generator_segformer import GeneratorSU
+from GAN.generator_segformer import GeneratorSU
 
 def infer(image_path, checkpoint_path, output_path, device='cuda'):
     device = torch.device(device if torch.cuda.is_available() else 'cpu')

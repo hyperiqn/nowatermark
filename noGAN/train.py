@@ -15,7 +15,7 @@ from torchvision import transforms
 from torchvision.utils import save_image
 
 from dataset import ImageToImageDataset
-from autoencoder import Generator 
+from autoencoder import AutoEncoder
 from vgg_loss import VGGLoss
 
 

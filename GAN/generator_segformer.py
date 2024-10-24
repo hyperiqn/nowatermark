@@ -38,7 +38,7 @@ class UNetDecoder(nn.Module):
 
 class GeneratorSU(nn.Module):
     def __init__(self, in_channels=3, out_channels=3):
-        super(Generator, self).__init__()
+        super(GeneratorSU, self).__init__()
         self.encoder = SegFormerEncoder(in_channels)
         self.decoder = UNetDecoder(in_channels=512, out_channels=out_channels)
 
@@ -49,7 +49,7 @@ class GeneratorSU(nn.Module):
         return x
 
 if __name__ == "__main__":
-    model = Generator(in_channels=3, out_channels=3) 
+    model = GeneratorSU(in_channels=3, out_channels=3) 
     x = torch.randn((1, 3, 256, 256))
     preds = model(x)
     print(preds.shape)
