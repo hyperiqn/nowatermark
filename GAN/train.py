@@ -90,21 +90,21 @@ def main():
     # =========================
     # 3. Load dataset
     # =========================
-    val_output_dir = ""
-    checkpoint_dir = ""
+    val_output_dir = "/data/anirudh/watermark_removal/outputs/val"
+    checkpoint_dir = "/data/anirudh/watermark_removal/outputs/checkpoints"
     checkpoint_path = None
     os.makedirs(val_output_dir, exist_ok=True)
     os.makedirs(checkpoint_dir, exist_ok=True)
 
     train_dataset = ImageToImageDataset(
-        root_A='', 
-        root_B='', 
+        root_A='/data/anirudh/watermark_removal/CLWD_images/train/Watermark_image', 
+        root_B='/data/anirudh/watermark_removal/CLWD_images/train/Watermark_free_image', 
         transform=transform
     )
     
     val_dataset = ImageToImageDataset(
-        root_A='', 
-        root_B='', 
+        root_A='/data/anirudh/watermark_removal/CLWD_images/val/Watermark_image', 
+        root_B='/data/anirudh/watermark_removal/CLWD_images/val/Watermark_free_image', 
         transform=transform
     )
     

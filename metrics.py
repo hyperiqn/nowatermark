@@ -32,14 +32,14 @@ def main():
 
 
     val_dataset = ImageToImageDataset(
-        root_A='/data/anirudh/watermark_removal/CLWD_images/val/Watermark_image', 
-        root_B='/data/anirudh/watermark_removal/CLWD_images/val/Watermark_free_image', 
+        root_A='', 
+        root_B='', 
         transform=transform
     )
     
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
 
-    checkpoint_path = "/data/anirudh/watermark_removal/output_no_gan/checkpoints/netG_final.pth"
+    checkpoint_path = ''
     netG = GeneratorSU(in_channels=3).to(device)
     netG.load_state_dict(torch.load(checkpoint_path, map_location=device, weights_only=True))
     netG.eval()
