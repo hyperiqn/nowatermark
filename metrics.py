@@ -49,8 +49,8 @@ def main():
     num_images = 0
 
     with torch.no_grad():
-        val_loop = tqdm(test_loader, desc="Calculating SSIM and PSNR")
-        for i, (img_A, img_B) in enumerate(val_loop):
+        loop = tqdm(test_loader, desc="Calculating SSIM and PSNR")
+        for i, (img_A, img_B) in enumerate(loop):
             img_A = img_A.to(device)
             img_B = img_B.to(device)
 
@@ -71,7 +71,7 @@ def main():
 
                 num_images += 1
 
-            val_loop.set_postfix(
+            loop.set_postfix(
                 avg_ssim=total_ssim / num_images,
                 avg_psnr=total_psnr / num_images,
             )
