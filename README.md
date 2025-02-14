@@ -107,5 +107,4 @@ Here are some sample images showcasing the performance of different models:
 Special thanks to the authors of the CLWD dataset and the researchers behind Pix2PixHD, Segformer, and advanced UNet architectures.
 
 ---
-This README provides an overview of the **Watermark Removal using GANs** project, detailing its methodology, results, and future scope.
 
