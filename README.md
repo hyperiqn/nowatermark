@@ -83,12 +83,11 @@ Despite **Pix2PixHD** showing the best numerical metrics, **SegformerUNet GAN** 
 ## Deployment images
 Here are some sample images showcasing the performance of different models:
 
-### Original Image with Watermark
-![Original Image](images/ss1.png)
+![Image1](images/ss1.png)
 
-![Generated Image](images/ss2.png)
+![Image2](images/ss2.png)
 
-![Pix2PixHD Output](images/ss3.png)
+![Image3](images/ss3.png)
 
 ## References
 - **Segformer Model**: [Hugging Face](https://huggingface.co/docs/transformers/en/model_doc/segformer)
